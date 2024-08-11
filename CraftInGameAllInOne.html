@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+        <script>
+            function openTab (evt, pageNumber) {
+    var tabDisplay = document.getElementsByClassName('tabDisplay');
+
+    
+    for (var i = 0; i < tabDisplay.length; i++) {
+        tabDisplay[i].style.display = "none";
+    }
+
+
+    var tabs = document.getElementsByClassName("tab");
+
+
+    for (var i = 0; i < tabDisplay.length; i++) {
+        tabs[i].className = tabs[i].className.replace(" active", "");
+    }
+
+
+    document.getElementById(pageNumber).style.display = 'block';
+    evt.currentTarget.className += ' active';
+}
+
+
+function mine(pickLevel) {
+    var stone = parseInt(document.getElementById("stone").innerText);
+    var iron = parseInt(document.getElementById("iron").innerText);
+    var diamond = parseInt(document.getElementById("diamond").innerText);
+    var emerald = parseInt(document.getElementById("emerald").innerText);
+    var oreChance = Math.floor(Math.random() * 100) + 1;
+
+
+    switch (pickLevel) {
+        case 'woodPick':
+            if (oreChance > 50) {
+                stone += 2;
+            } else {
+                stone ++;
+            }
+
+            break;
+        
+        case 'stonePick':
+            if (oreChance > 85) {
+                stone += 2;
+            } else if (oreChance < 30) {
+                stone ++;
+            } else {
+                iron ++;
+            }
+            
+            break;
+
+        case 'ironPick':
+            diamond ++;
+            break;
+
+        case 'diamondPick':
+            emerald ++;
+            break;
+    }
+
+
+    document.getElementById("stone").innerHTML = stone;
+    document.getElementById("iron").innerHTML = iron;
+    document.getElementById("diamond").innerHTML = diamond;
+    document.getElementById("emerald").innerHTML = emerald;
+}
+
+
+function chopTree() {
+    var durability = document.getElementById("treeHP").innerText;
+    var damage = document.getElementById("currentChopDamage").innerText;
+    var logs = parseInt(document.getElementById("logs").innerText);
+    var logsMultiplier = parseInt(document.getElementById("currentLogMultiplier").innerText);
+
+    durability -= damage;
+
+
+    if (durability < 0 || durability == 0) {
+        durability = 20;
+
+        logs += (Math.floor(Math.random() * 5) + 1) * logsMultiplier;
+    }
+
+
+    if (logs != 0) {
+        document.getElementById("logTitle").style.display = "block";
+        document.getElementById("logs").style.display = "block";
+    }
+
+
+    document.getElementById("treeHP").innerHTML = durability;
+    document.getElementById("logs").innerHTML = logs;
+}
+
+
+function buyUpgrade(upgrade, effectID) {
+    var effect = parseInt(document.getElementById(effectID).innerText);
+
+
+    if (canBuy(upgrade)) {
+        switch (upgrade) {
+            case 'chopDamage' :
+                effect ++;
+                break;
+
+            case 'logMultiplier' :
+                effect ++;
+                break;
+        }
+    }
+
+
+    document.getElementById(effectID).innerHTML = effect;
+}
+
+
+function canBuy(upgrade) {
+    var resources = [];
+    var amounts = [];
+    var cost = document.getElementById(upgrade).innerText;
+    var counter = 0;
+    var result;
+
+
+    while ((cost.length) != 0) {
+        if ((cost.match(/ /g) || []).length >= 2) {
+            resources [counter] = cost.substring(0, (cost.indexOf(' ') + 1));
+            cost = cost.replace(resources [counter], '');
+            amounts [counter] = cost.substring(0, cost.indexOf(' '));
+            cost = cost.replace(amounts [counter], '');
+            cost = cost.replace(' ', '');
+        } else if ((cost.match(/ /g) || []).length = 1) {
+            resources [counter] = cost.substring(0, (cost.indexOf(' ') + 1));
+            cost = cost.replace(resources [counter], '');
+            amounts [counter] = cost.substring(0, cost.length);
+            cost = cost.replace(amounts [counter], '');
+        }
+
+
+        switch (resources[counter]) {
+            case 'Logs: ' :
+                if (parseInt(document.getElementById("logs").innerText) >= parseInt(amounts [counter])) {
+                    result = true;
+                } else {
+                    result = false;
+                }
+                break;
+
+            case 'Stones: ' :
+                if (parseInt(document.getElementById("stone").innerText) >= parseInt(amounts [counter])) {
+                    result = true;
+                
+                } else {
+                    result = false;
+                }
+                break;
+        }
+
+        
+        counter ++;
+    }
+
+
+    if (result == true) {
+        for (let i = 0; i <= (resources.length); i++) {
+            switch (resources[i]) {
+                case 'Logs: ' :
+                    document.getElementById("logs").innerHTML = (parseInt(document.getElementById("logs").innerText) - amounts [i]);
+                    break;
+                    
+                case 'Stones: ' :
+                    document.getElementById("stone").innerHTML = (parseInt(document.getElementById("stone").innerText) - amounts [i]);
+                    break;
+            }
+        }
+    }
+
+
+    return (result);
+}
+        </script>
+        <style>
+            .doNotShow {
+    display: none;
+}
+
+table, tr, th, td {
+    border: 1px black solid;
+    border-collapse: collapse;
+}
+
+.upgradeRow:hover {
+    background-color: lightseagreen;
+    cursor: pointer;
+}
+
+tr:nth-child(even) {
+    background-color: lightcyan;
+}
+
+tr:nth-child(odd) {
+    background-color: powderblue;
+}
+
+body {
+    background-color: lightGrey;
+}
+        </style>
+
+        <title>
+            WillNotAddTitleHere
+        </title>
+    </head>
+
+    
+    <body>
+        <div class="tabs">
+            <button class="tab active" onclick="openTab(event, 'homePage')">Home</button>
+            <button class="tab" onclick="openTab(event, 'craftPage')">Craft</button>
+            <button class="tab" onclick="openTab(event, 'upgradePage')">Upgrade</button>
+            <button class="tab" onclick="openTab(event, 'minePage')">Mine</button>
+            <button class="tab" onclick="openTab(event, 'chopPage')">Chop</button>
+            <button class="tab" onclick="openTab(event, 'farmPage')">Farm</button>
+        </div>
+
+
+        <div id="homePage" class="tabDisplay">
+            <h1>
+                Home Page
+            </h1>
+        </div>
+
+
+        <div id="craftPage" class="tabDisplay doNotShow">
+            <h1>
+                Craft Page
+            </h1>
+        </div>
+
+
+        <div id="upgradePage" class="tabDisplay doNotShow">
+            <h1>
+                Upgrade Page
+            </h1>
+
+            <table>
+                <tr>
+                    <th>
+                        Upgrade
+                    </th>
+                    <th>
+                        Cost
+                    </th>
+                    <th>
+                        Effect
+                    </th>
+                </tr>
+
+                <tr class="upgradeRow" onclick="buyUpgrade('chopDamage', 'currentChopDamage')">
+                    <td>
+                        Chop Damage
+                    </td>
+                    <td id="chopDamage">
+                        Logs: 5 Stones: 2
+                    </td>
+                    <td id="currentChopDamage">
+                        1
+                    </td>
+                </tr>
+
+                <tr class="upgradeRow" onclick="buyUpgrade('logMultiplier', 'currentLogMultiplier')">
+                    <td>
+                        Log Multiplier
+                    </td>
+                    <td id="logMultiplier">
+                        Logs: 10
+                    </td>
+                    <td id="currentLogMultiplier">
+                        1
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+        <div id="minePage" class="tabDisplay doNotShow">
+            <h1>
+                Mine Page
+            </h1>
+
+            <button onclick="mine('woodPick')">Mine</button>
+            <button onclick="mine('stonePick')">Mine</button>
+            <button onclick="mine('ironPick')">Mine</button>
+            <button onclick="mine('diamondPick')">Mine</button>
+
+            <table>
+                <tr>
+                    <td>
+                        Stone:
+                    </td>
+                    <td id="stone">
+                        0
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Iron:
+                    </td>
+                    <td id="iron">
+                        0
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Diamond:
+                    </td>
+                    <td id="diamond">
+                        0
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        Emerald:
+                    </td>
+                    <td id="emerald">
+                        0
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+
+        <div id="chopPage" class="tabDisplay doNotShow">
+            <h1>
+                Chop Page
+            </h1>
+
+            <h3>
+                Tree Health:
+            </h3>
+
+            <p id="treeHP">
+                20
+            </p>
+
+            <button onclick="chopTree()">Chop</button>
+
+            <h3 id="logTitle" class="doNotShow">
+                Logs:
+            </h3>
+
+            <p id="logs" class="doNotShow">
+                0
+            </p>
+        </div>
+
+
+        <div id="farmPage" class="tabDisplay doNotShow">
+            <h1>
+                Farm Page
+            </h1>
+        </div>
+    </body>
+</html>
